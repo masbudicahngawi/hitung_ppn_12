@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Sigmar&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
+    <title>Hitung PPN 12%</title>
+</head>
+
+<body>
+    <div id="container" class="mx-auto bg-amber-200 p-8 h-screen">
+
+        <h2 class="font-bold text-3xl mb-6">Hitung PPN</h2>
+
+        <!--Harga dan Satuan-->
+        <div class="flex gap-3 mb-3">
+            <div class="wadah w-1/2">
+                <div class="duo">
+                    <label for="harga_satuan">Harga Satuan</label>
+                </div>
+                <input
+                    class="input-numeral px-2 border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-2xl"
+                    type="text" name="harga_satuan" id="harga_satuan">
+            </div>
+            <div class="wadah w-1/2">
+                <div class="duo">
+                    <label for="kuantitas">Kuantitas</label>
+                </div>
+                <input class="angka px-2 border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-2xl"
+                    type="text" name="kuantitas" id="kuantitas">
+            </div>
+        </div>
+
+        <div class="flex gap-3 mb-3">
+            <div class="wadah">
+                <div class="duo">
+                    <label for="dpp">DPP</label>
+                </div>
+                <input class=" border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-3xl" type="text"
+                    name="dpp" id="dpp" readonly="readonly">
+            </div>
+
+        </div>
+
+        <div class="wadah mb-1" id="tes">
+            <div class="grup">
+                <input type="checkbox" id="cek_ekstra"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                <label for="cek_ekstra">DPP Nilai Lain/Besaran Tertentu?</label>
+            </div>
+        </div>
+
+
+        <!-- Select Nilai Lain/Besaran Tertentu dan Kolom kosongnya-->
+        <div class="flex gap-3 mb-3">
+            <select id="pil_sp"
+                class="w-1/2 px-2 py-0.5 bg-gray-50 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 border-amber-600 border-1">
+                <option value=" #">--Pilih--</option>
+                <option value="nl">Nilai Lain</option>
+                <option value="bt">Besaran Tertentu</option>
+            </select>
+
+            <div class="wadah w-1/2">
+                <div class="duo">
+                </div>
+                <input class="px-2 border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-2xl"
+                    type="text" name="spesial" id="spesial">
+            </div>
+        </div>
+
+        <!--PPN dan Harga Include PPN-->
+        <div class="flex mb-4 gap-3">
+            <div class="wadah w-1/2">
+                <div class="duo">
+                    <label for="dpp_nl">PPN</label>
+                </div>
+                <input class="px-2 border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-2xl"
+                    type="text" name="ppn" id="ppn" readonly="readonly">
+            </div>
+
+            <div class="wadah w-1/2">
+                <div class="duo">
+                    <label for="dpp_nl">DPP + PPN</label>
+                </div>
+                <input class="px-2 border-amber-600 border-1 bg-amber-50 rounded-sm w-full text-right text-2xl"
+                    type="text" name="harga_ppn" id="harga_ppn" readonly="readonly">
+            </div>
+        </div>
+
+    </div>
+
+    <script id="jsbin-javascript">
+        var harga_satuan = document.getElementById("harga_satuan");
+        var kuantitas = document.getElementById("kuantitas");
+        var dpp = document.getElementById("dpp");
+        var spesial = document.getElementById("spesial");
+        var ppn = document.getElementById("ppn");
+        var harga_ppn = document.getElementById("harga_ppn");
+        var hitung = document.getElementById("hitung");
+
+        var cek_ekstra = document.getElementById("cek_ekstra");
+        var pil_sp = document.getElementById("pil_sp");
+
+        new Cleave(harga_satuan, {
+            numeral: true,
+            delimiter: '_',
+            numeralThousandsGroupStyle: 'thousand'
+        });
+
+        // numeral
+        var cleaveNumeral = new Cleave(kuantitas, {
+            numeral: true,
+            delimiter: '_',
+            numeralThousandsGroupStyle: 'thousand'
+        });
+
+        function klir(teks) {
+            var baru = teks.replace(/\_/g, '');
+            return baru;
+        }
+
+        function klir_titik(teks) {
+            var baru = teks.replace(/\./g, '');
+            return baru;
+        }
+
+        function dekor(teks) {
+            var indo = new Intl.NumberFormat('id-ID');
+            return (indo.format(teks));
+        }
+
+        cek_ekstra.addEventListener("click", function () {
+            if (this.checked) {
+                //alert("Thank you Anda memilih saya..");
+                pil_sp.style.display = 'block';
+                pil_sp.style.visibility = 'visible';
+
+                spesial.style.display = 'block';
+                spesial.style.visibility = 'visible';
+            } else {
+                //alert("Anda menghilangkan ceklist saya !");
+                pil_sp.style.display = 'none';
+                pil_sp.style.visibility = 'hidden';
+
+                spesial.style.display = 'none';
+                spesial.style.visibility = 'hidden';
+            }
+        });
+
+        kuantitas.addEventListener("blur", function () {
+            //console.log(this.value);
+            var hasil_dpp = parseInt(klir(harga_satuan.value)) * parseInt(klir(kuantitas.value));
+            dpp.value = dekor(hasil_dpp);
+
+            var hasil_ppn = parseInt(klir_titik(dpp.value)) * 0.12;
+            ppn.value = dekor(hasil_ppn);
+
+            var hasil_harga_ppn = parseInt(klir_titik(ppn.value)) + parseInt(klir_titik(dpp.value));
+            harga_ppn.value = dekor(hasil_harga_ppn);
+
+
+        });
+
+        pil_sp.addEventListener("change", function () {
+            //alert(this.value);
+            if (this.value == "nl") {
+                var hasil_spesial = parseInt(klir_titik(dpp.value)) * 11 / 12;
+                spesial.value = dekor(hasil_spesial);
+                ppn.value = dekor(parseInt(klir_titik(spesial.value)) * 0.12);
+                harga_ppn.value = dekor(parseInt(klir_titik(dpp.value)) + parseInt(klir_titik(ppn.value)));
+            } else if (this.value == "bt") {
+                ppn.readOnly = false;
+                spesial.style.display = 'none';
+                spesial.style.visibility = 'hidden';
+                ppn.value = "";
+                ppn.focus();
+                new Cleave(ppn, {
+                    numeral: true,
+                    delimiter: '_',
+                    numeralThousandsGroupStyle: 'thousand'
+                });
+                ppn.addEventListener("focusout", function () {
+                    harga_ppn.value = dekor(parseInt(klir_titik(dpp.value)) + parseInt(klir(ppn.value)));
+                });
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
